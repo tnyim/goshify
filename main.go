@@ -8,12 +8,12 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"strconv"
 	"syscall"
 
 	"github.com/boltdb/bolt"
 	"github.com/gorilla/mux"
 	"github.com/russross/blackfriday"
+	"github.com/satori/go.uuid"
 )
 
 var db *bolt.DB
@@ -42,8 +42,7 @@ func StoreContent(w http.ResponseWriter, r *http.Request) {
 
 	err := db.Batch(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("Texts"))
-		id, _ := b.NextSequence()
-		bid = []byte(fmt.Sprintf("%014d", id))
+		bid = []byte(uuid.NewV4().String())
 		return b.Put(bid, []byte(vars["base64"]))
 	})
 	if err == nil {
@@ -57,12 +56,10 @@ func StoreContent(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetContent(id string) ([]byte, error) {
-	i, _ := strconv.Atoi(id)
-	key := []byte(fmt.Sprintf("%014d", i))
 	var text []byte
 	err := db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("Texts"))
-		c := b.Get(key)
+		c := b.Get([]byte(id))
 		if c == nil {
 			return fmt.Errorf("not found")
 		}
@@ -132,8 +129,8 @@ func main() {
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/d/{base64:(?s).*}", URLtoMarkdown)
 	router.HandleFunc("/s/{base64:(?s).*}", StoreContent)
-	router.HandleFunc("/l/{id:[0-9]+}", LoadContent)
-	router.HandleFunc("/r/{id:[0-9]+}", LoadRawContent)
+	router.HandleFunc("/l/{id}", LoadContent)
+	router.HandleFunc("/r/{id}", LoadRawContent)
 	router.HandleFunc("/", LoadHome)
 	router.HandleFunc("/style.css", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, r.URL.Path[1:])
