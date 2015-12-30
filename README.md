@@ -32,13 +32,13 @@ You'll be given an ID to recall this document later.
 
 To recall a document:
 
-    http://goshify.tny.im/l/123
+    http://goshify.tny.im/l/352c706a-bffc-4da0-a75e-e5b429a9c5ae
     
-Where 123 is the ID that was returned in the storing step. If a document with the specified ID doesn't exist, a 404 is returned.
+Where 352c706a-bffc-4da0-a75e-e5b429a9c5ae is the ID that was returned in the storing step. If a document with the specified ID doesn't exist, a 404 is returned.
 
 To recall the Base 64-encoded document, as it was saved (for example, for editing it in Hashify):
 
-    http://goshify.tny.im/r/123
+    http://goshify.tny.im/r/352c706a-bffc-4da0-a75e-e5b429a9c5ae
 
 _**But this is not a REST API!?**_ Nobody said it was :) It is designed to be easy to use by a human fiddling with the address bar of any web browser.
 
@@ -51,4 +51,4 @@ Goshify is just a simple, 150 line Go program... [Here's the GitHub](https://git
   - https://github.com/russross/blackfriday
   
 ## Who
-![Segvault](http://s.lowendshare.com/11/1451510832.605.segvault-24.png), a subsidiary of [tny. internet media](http://i.tny.im).
+![Segvault](http://s.lowendshare.com/11/1451510832.605.segvault-24.png), part of [tny. internet media](http://i.tny.im).
