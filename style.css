@@ -1,0 +1,277 @@
+/*
+
+github.com style (c) Vasily Polovnyov <vast@whiteants.net>
+
+*/
+
+pre code {
+  display: block; padding: 0.5em;
+  color: #333;
+  background: #f8f8ff
+}
+
+pre .comment,
+pre .template_comment,
+pre .diff .header,
+pre .javadoc {
+  color: #998;
+  font-style: italic
+}
+
+pre .keyword,
+pre .css .rule .keyword,
+pre .winutils,
+pre .javascript .title,
+pre .nginx .title,
+pre .subst,
+pre .request,
+pre .status {
+  color: #333;
+  font-weight: bold
+}
+
+pre .number,
+pre .hexcolor,
+pre .ruby .constant {
+  color: #099;
+}
+
+pre .string,
+pre .tag .value,
+pre .phpdoc,
+pre .tex .formula {
+  color: #d14
+}
+
+pre .title,
+pre .id,
+pre .coffeescript .params,
+pre .scss .preprocessor {
+  color: #900;
+  font-weight: bold
+}
+
+pre .javascript .title,
+pre .lisp .title,
+pre .clojure .title,
+pre .subst {
+  font-weight: normal
+}
+
+pre .class .title,
+pre .haskell .type,
+pre .vhdl .literal,
+pre .tex .command {
+  color: #458;
+  font-weight: bold
+}
+
+pre .tag,
+pre .tag .title,
+pre .rules .property,
+pre .django .tag .keyword {
+  color: #000080;
+  font-weight: normal
+}
+
+pre .attribute,
+pre .variable,
+pre .lisp .body {
+  color: #008080
+}
+
+pre .regexp {
+  color: #009926
+}
+
+pre .class {
+  color: #458;
+  font-weight: bold
+}
+
+pre .symbol,
+pre .ruby .symbol .string,
+pre .lisp .keyword,
+pre .tex .special,
+pre .prompt {
+  color: #990073
+}
+
+pre .built_in,
+pre .lisp .title,
+pre .clojure .built_in {
+  color: #0086b3
+}
+
+pre .preprocessor,
+pre .pragma,
+pre .pi,
+pre .doctype,
+pre .shebang,
+pre .cdata {
+  color: #999;
+  font-weight: bold
+}
+
+pre .deletion {
+  background: #fdd
+}
+
+pre .addition {
+  background: #dfd
+}
+
+pre .diff .change {
+  background: #0086b3
+}
+
+pre .chunk {
+  color: #aaa
+}
+body {
+  margin: 0;
+  min-width: 900px;
+  min-height: 600px;
+  padding: 0;
+  font: 24px/32px "Helvetica Neue", Helvetica, sans-serif;
+}
+body.dragging {
+  cursor: ew-resize;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+body.dragging ::-moz-selection {
+  background: none;
+}
+
+#markup {
+  margin-left: 480px;
+  max-width: 36em;
+  padding: 1em 2em 2em 2.167em;
+}
+#sidebar.concealed + #markup {
+  margin-left: 0;
+}
+#markup a {
+  color: #0066cc;
+}
+#markup a:focus, #markup a:hover {
+  text-decoration: underline;
+}
+#markup img {
+  max-width: 100%;
+}
+#markup h1 + p > time:first-child:only-child {
+  font-style: italic;
+}
+
+h1 {
+  margin: 24px 0;
+  font-size: 48px;
+  line-height: 1;
+}
+
+h2, h3, h4, h5, h6 {
+  margin: 12px 0;
+  font-size: 24px;
+  line-height: 36px;
+}
+
+h2 {
+  margin-top: 24px;
+  font-size: 36px;
+}
+
+h3 {
+  margin-top: 24px;
+  font-size: 30px;
+}
+
+hr {
+  margin: 18px 0 12px;
+  border: none;
+  border-top: 1px solid #cccccc;
+}
+
+p, ol, ul {
+  margin: 12px 0;
+}
+
+ul {
+  padding: 0;
+  list-style: disc outside;
+}
+
+li ol, li ul {
+  margin: 0;
+}
+li li {
+  margin-left: 32px;
+}
+
+blockquote {
+  margin: 12px 0;
+  border-left: 6px solid #dddddd;
+  padding: 0 24px 0 18px;
+  color: #777777;
+}
+blockquote em {
+  font-style: normal;
+}
+
+pre {
+  margin: 24px 0;
+  border: 1px solid #cccccc;
+  padding: 1px;
+  white-space: pre-wrap;
+}
+pre > code {
+  background: #f7f7f7;
+  padding: 12px 18px;
+  font-size: 18px;
+  line-height: 24px;
+}
+
+code {
+  background: #f7f7f7;
+  padding: 0 0.25em;
+  line-height: 1;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+a:focus, a:hover {
+  color: #333333;
+  outline: none;
+}
+
+@media print {
+  #sidebar {
+    display: none !important;
+  }
+
+  #markup {
+    margin: 0;
+  }
+  #markup a {
+    font-weight: bold;
+    color: inherit;
+  }
+  #markup a:after {
+    content: " [" attr(href) "]";
+    font-weight: normal;
+    font-size: 0.8em;
+  }
+  #markup a[href^="/"]:after {
+    content: " [http://goshify.tny.im" attr(href) "]";
+  }
+  #markup h1, #markup h2, #markup h3, #markup h4, #markup h5, #markup h6 {
+    page-break-after: avoid;
+  }
+  #markup pre {
+    page-break-inside: avoid;
+  }
+} 
