@@ -21,16 +21,20 @@ In the following examples,
 
 is the document encoded in Base-64 as Hashify does it.
     
-To present a document, as Hashify does:
+To **present a document**, as Hashify does:
 
     http://goshify.tny.im/d/QSBzYW1wbGUgZG9jdW1lbnQ=
 
-To store this document for easier recalling:
+To **store this document** for easier recalling:
 
     http://goshify.tny.im/s/QSBzYW1wbGUgZG9jdW1lbnQ=
 You'll be given an ID to recall this document later.
 
-To recall a document:
+You can also make a POST request with the raw Markdown (Base 64 encoded or not) to
+
+    http://goshify.tny.im/s
+
+To **recall a document**:
 
     http://goshify.tny.im/l/352c706a-bffc-4da0-a75e-e5b429a9c5ae
     

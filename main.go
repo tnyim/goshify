@@ -20,12 +20,13 @@ var db *bolt.DB
 
 func SendHTML(w http.ResponseWriter, r *http.Request, b64 string) {
 	d, err := base64.StdEncoding.DecodeString(b64)
-	if err != nil {
-		w.WriteHeader(500)
-		return
-	}
 	w.Write([]byte("<html><head><link rel=stylesheet href=\"/style.css\" /></head><body><div id=\"markup\" style=\"margin-left: 0px;\">"))
-	w.Write(blackfriday.MarkdownCommon(d))
+	if err != nil {
+		// it's probably markdown already, just show as-is
+		w.Write(blackfriday.MarkdownCommon([]byte(b64)))
+	} else {
+		w.Write(blackfriday.MarkdownCommon(d))
+	}
 	w.Write([]byte("</div></body>"))
 }
 
@@ -35,20 +36,39 @@ func URLtoMarkdown(w http.ResponseWriter, r *http.Request) {
 	SendHTML(w, r, vars["base64"])
 }
 
-func StoreContent(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-
-	var bid []byte
+func PutContent(content []byte) (string, error) {
+	id := uuid.NewV4().String()
 
 	err := db.Batch(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("Texts"))
-		bid = []byte(uuid.NewV4().String())
-		return b.Put(bid, []byte(vars["base64"]))
+		return b.Put([]byte(id), content)
 	})
+	return id, err
+}
+
+func StoreContent(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	id, err := PutContent([]byte(vars["base64"]))
 	if err == nil {
 		w.Write([]byte("<html><body>Success, your markdown's ID is "))
-		w.Write(bid)
+		w.Write([]byte(id))
 		w.Write([]byte("</body>"))
+	} else {
+		w.WriteHeader(500)
+		fmt.Println(err)
+	}
+}
+
+func StoreContentPost(w http.ResponseWriter, r *http.Request) {
+	content, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		w.WriteHeader(500)
+		return
+	}
+	id, err := PutContent(content)
+	if err == nil {
+		w.Write([]byte("<html><body>Success, your markdown's ID is " + id + "</body>"))
 	} else {
 		w.WriteHeader(500)
 		fmt.Println(err)
@@ -127,11 +147,12 @@ func main() {
 	signal.Notify(sigs, syscall.SIGINT)
 
 	router := mux.NewRouter().StrictSlash(true)
-	router.HandleFunc("/d/{base64:(?s).*}", URLtoMarkdown)
-	router.HandleFunc("/s/{base64:(?s).*}", StoreContent)
-	router.HandleFunc("/l/{id}", LoadContent)
-	router.HandleFunc("/r/{id}", LoadRawContent)
-	router.HandleFunc("/", LoadHome)
+	router.HandleFunc("/d/{base64:(?s).*}", URLtoMarkdown).Methods("GET")
+	router.HandleFunc("/s/{base64:(?s).*}", StoreContent).Methods("GET")
+	router.HandleFunc("/s", StoreContentPost).Methods("POST")
+	router.HandleFunc("/l/{id}", LoadContent).Methods("GET")
+	router.HandleFunc("/r/{id}", LoadRawContent).Methods("GET")
+	router.HandleFunc("/", LoadHome).Methods("GET")
 	router.HandleFunc("/style.css", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, r.URL.Path[1:])
 	})
