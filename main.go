@@ -149,13 +149,15 @@ func main() {
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/d/{base64:(?s).*}", URLtoMarkdown).Methods("GET")
 	router.HandleFunc("/s/{base64:(?s).*}", StoreContent).Methods("GET")
-	router.HandleFunc("/s/", StoreContentPost).Methods("POST")
 	router.HandleFunc("/l/{id}", LoadContent).Methods("GET")
 	router.HandleFunc("/r/{id}", LoadRawContent).Methods("GET")
 	router.HandleFunc("/", LoadHome).Methods("GET")
 	router.HandleFunc("/style.css", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, r.URL.Path[1:])
 	})
+	router.StrictSlash(false)
+	router.HandleFunc("/s/", StoreContentPost).Methods("POST")
+	router.HandleFunc("/s", StoreContentPost).Methods("POST")
 	go http.ListenAndServe(":8089", router)
 	fmt.Println("Listening...")
 	<-sigs
