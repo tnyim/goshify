@@ -149,7 +149,7 @@ func main() {
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/d/{base64:(?s).*}", URLtoMarkdown).Methods("GET")
 	router.HandleFunc("/s/{base64:(?s).*}", StoreContent).Methods("GET")
-	router.HandleFunc("/s", StoreContentPost).Methods("POST")
+	router.HandleFunc("/s/", StoreContentPost).Methods("POST")
 	router.HandleFunc("/l/{id}", LoadContent).Methods("GET")
 	router.HandleFunc("/r/{id}", LoadRawContent).Methods("GET")
 	router.HandleFunc("/", LoadHome).Methods("GET")
