@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 
 	"github.com/boltdb/bolt"
@@ -17,6 +18,32 @@ import (
 )
 
 var db *bolt.DB
+
+func GetContent(id string) ([]byte, error) {
+	var text []byte
+	err := db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("Texts"))
+		c := b.Get([]byte(id))
+		if c == nil {
+			return fmt.Errorf("not found")
+		}
+		// byte slices returned by bolt are only valid inside their transaction
+		text = make([]byte, len(c))
+		copy(text, c)
+		return nil
+	})
+	return text, err
+}
+
+func PutContent(content []byte) (string, error) {
+	id := uuid.NewV4().String()
+
+	err := db.Batch(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("Texts"))
+		return b.Put([]byte(id), content)
+	})
+	return id, err
+}
 
 func SendHTML(w http.ResponseWriter, r *http.Request, b64 string) {
 	d, err := base64.StdEncoding.DecodeString(b64)
@@ -34,16 +61,6 @@ func URLtoMarkdown(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
 	SendHTML(w, r, vars["base64"])
-}
-
-func PutContent(content []byte) (string, error) {
-	id := uuid.NewV4().String()
-
-	err := db.Batch(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte("Texts"))
-		return b.Put([]byte(id), content)
-	})
-	return id, err
 }
 
 func StoreContent(w http.ResponseWriter, r *http.Request) {
@@ -66,6 +83,12 @@ func StoreContentPost(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(500)
 		return
 	}
+
+	// only allow text uploads
+	if !strings.HasPrefix(http.DetectContentType(content), "text/") {
+		w.WriteHeader(415)
+		return
+	}
 	id, err := PutContent(content)
 	if err == nil {
 		w.Write([]byte("<html><body>Success, your markdown's ID is " + id + "</body>"))
@@ -73,22 +96,6 @@ func StoreContentPost(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(500)
 		fmt.Println(err)
 	}
-}
-
-func GetContent(id string) ([]byte, error) {
-	var text []byte
-	err := db.View(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte("Texts"))
-		c := b.Get([]byte(id))
-		if c == nil {
-			return fmt.Errorf("not found")
-		}
-		// byte slices returned by bolt are only valid inside their transaction
-		text = make([]byte, len(c))
-		copy(text, c)
-		return nil
-	})
-	return text, err
 }
 
 func LoadContent(w http.ResponseWriter, r *http.Request) {
